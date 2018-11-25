@@ -20,24 +20,23 @@ class EmailSender:
 	def with_internet(f):
     		@wraps(f)
     		def wrapped(*args, **kwargs):
-			print("Connecting to internet...")
+				print("Connecting to internet...")
         		subprocess.run(["pon", "rnet"])
         		start = time.time()
-			timeout = 20
-			while True:
-				if "ppp0" in netifaces.interfaces():
-					print("Connected to internet!")
-					break
-				if time.time() - start > timeout:
-					print("Unable to connect. Timedout {}s".format(timeout))
-					break				
-			r = f(*args, **kwargs)
-			print("Disconecting from internet..")
-        		subprocess.run(["poff", "rnet"])
-			print("Disconected from internet")
+				timeout = 20
+				while True:
+					if "ppp0" in netifaces.interfaces():
+						print("Connected to internet!")
+						break
+					if time.time() - start > timeout:
+						print("Unable to connect. Timedout {}s".format(timeout))
+						break				
+				r = f(*args, **kwargs)
+				print("Disconecting from internet..")
+	        	subprocess.run(["poff", "rnet"])
+				print("Disconected from internet")
         		return r
-    		return wrapped
-	
+        			
 	@with_internet
 	def send(self, recipients, subject, body, attachments):
 		COMMASPACE = ', '
