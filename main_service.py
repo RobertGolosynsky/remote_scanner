@@ -2,10 +2,8 @@ import serial
 
 from collections import defaultdict
 import re
-
 from numpy import genfromtxt  
 import matplotlib.pyplot as plt
-
 from datetime import datetime
 
 
@@ -33,7 +31,6 @@ class RemoteScannerService():
 
 	def _scan_and_send(self, min_max_step, interval, time):
 
-		# args = rtl.scan(25,1700,200,1,10,file_name)
 		args = self.sdr.scan(min_max_step, interval, time, self.file_name)
 			    
 		self._flatten_readings(self.file_name, self.flat_data_path)

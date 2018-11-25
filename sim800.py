@@ -46,7 +46,7 @@ class Sim800():
 
 	def _send_command(self, comm, callback=lambda resp: None):
 		command = comm+"\r\n"
-		print("sending command", command)
+		print("Sending command", command)
 		self.port.write(command.encode())
 		callback( self.port.read_until(b"OK").decode("utf-8") )
 

@@ -12,7 +12,7 @@ import config
 
 class EmailSender:
 	
-	"""docstring for EmailSender"""
+	
 	def __init__(self, mail_user, mail_password):
 		self.mail_user = mail_user
 		self.mail_password = mail_password
