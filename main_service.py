@@ -41,6 +41,7 @@ class RemoteScannerService():
 
 		subject = "Scan taken on {}".format(datetime.now())
 		body = "Scan done with command {}".format(" ".join(args[:-1]))
+		print(self.email_sender)
 		self.email_sender.send(self.recipients, subject, body, [self.file_name , self.flat_data_path, self.img_path])
 
 
