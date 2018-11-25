@@ -18,11 +18,11 @@ class EmailSender:
 		self.gmail_password = gmail_password
 	
 	def with_internet(f):
-    		@wraps(f)
-    		def wrapped(*args, **kwargs):
+			@wraps(f)
+			def wrapped(*args, **kwargs):
 				print("Connecting to internet...")
-        		subprocess.run(["pon", "rnet"])
-        		start = time.time()
+				subprocess.run(["pon", "rnet"])
+				start = time.time()
 				timeout = 20
 				while True:
 					if "ppp0" in netifaces.interfaces():
@@ -33,10 +33,10 @@ class EmailSender:
 						break				
 				r = f(*args, **kwargs)
 				print("Disconecting from internet..")
-	        	subprocess.run(["poff", "rnet"])
+				subprocess.run(["poff", "rnet"])
 				print("Disconected from internet")
-        		return r
-        			
+				return r
+					
 	@with_internet
 	def send(self, recipients, subject, body, attachments):
 		COMMASPACE = ', '
@@ -50,28 +50,28 @@ class EmailSender:
 		outer.attach(body) 
 
 		for file in attachments:
-		    try:
-		        with open(file, 'rb') as fp:
-		            msg = MIMEBase('application', "octet-stream")
-		            msg.set_payload(fp.read())
-		        encoders.encode_base64(msg)
-		        msg.add_header('Content-Disposition', 'attachment', filename=os.path.basename(file))
-		        outer.attach(msg)
-		    except:
-		        print("Unable to open one of the attachments. Error: ", sys.exc_info()[0])
-		        raise
+			try:
+				with open(file, 'rb') as fp:
+					msg = MIMEBase('application', "octet-stream")
+					msg.set_payload(fp.read())
+				encoders.encode_base64(msg)
+				msg.add_header('Content-Disposition', 'attachment', filename=os.path.basename(file))
+				outer.attach(msg)
+			except:
+				print("Unable to open one of the attachments. Error: ", sys.exc_info()[0])
+				raise
 
 		composed = outer.as_string()
 
 		try:
-		    with smtplib.SMTP('smtp.gmail.com', 587) as s:
-		        s.ehlo()
-		        s.starttls()
-		        s.ehlo()
-		        s.login(self.gmail_user, self.gmail_password)
-		        s.sendmail(self.gmail_user, recipients, composed)
-		        s.close()
-		    print("Email sent!")
+			with smtplib.SMTP('smtp.gmail.com', 587) as s:
+				s.ehlo()
+				s.starttls()
+				s.ehlo()
+				s.login(self.gmail_user, self.gmail_password)
+				s.sendmail(self.gmail_user, recipients, composed)
+				s.close()
+			print("Email sent!")
 		except:
-		    print("Unable to send the email. Error: ", sys.exc_info()[0])
-		    raise
+			print("Unable to send the email. Error: ", sys.exc_info()[0])
+			raise
