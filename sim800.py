@@ -59,9 +59,10 @@ class Sim800():
 		self.port.write("AT\r\n".encode())
 		time.sleep(1)
 		self.port.write("AT+CMGF=1\r\n".encode())
-
+		time.sleep(1)
 
 	def _reinit(self):
+		self.port.close()
 		self.port = serial.Serial(port=self.serial_port, baudrate=115200)
 
 
@@ -71,7 +72,7 @@ class Sim800():
 				self.on_new_message_listener(raw)
 				self._reinit()
 
-			self._send_command("at+cmgr="+message_id, wrapper)
+			self._send_command("at+cmgr="+message_id, lambda raw :wrapper(raw))
 
 
 	def _process(self, line):

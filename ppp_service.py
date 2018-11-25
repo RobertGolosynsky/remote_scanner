@@ -18,6 +18,13 @@ def is_connected():
 def turn_off():
 	print("Disconecting from internet..")
 	subprocess.run(["poff", "rnet"])
+	retry_time = 1
+	while True:
+		if "ppp0" not in netifaces.interfaces():
+			break
+		print("ppp0 still present, retrying in {} second".format(retry_time))
+		time.sleep(retry_time)
+
 	print("Disconected from internet")
 
 
@@ -33,7 +40,7 @@ def turn_on():
 				print("Connected to internet!")
 				break
 			else:
-				print("ppp0 present, but no internet, retrying in 1 second".format(retry_time))
+				print("ppp0 present, but no internet, retrying in {} second".format(retry_time))
 		if time.time() - start > timeout:
 			print("Unable to connect. Timedout {}s".format(timeout))
 			break
@@ -48,4 +55,5 @@ def with_internet(f):
                 turn_off()
                 return r
         return wrapped
+
 
