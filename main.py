@@ -1,10 +1,15 @@
 from config import *
+from rtlsdr import RTLSDR
+from email_sender import EmailSender
+from sim800 import Sim800
+from main_service import RemoteScannerService
+
 
 receiver = RTLSDR()
 
 email_sender = EmailSender(gmail_user, gmail_password)
 
-main_service = RemoteScannerService(receiver, email_sender)
+main_service = RemoteScannerService(receiver, email_sender, recipients, file_path, flat_data_path, img_path)
 
 modem = Sim800(serial_port)
 

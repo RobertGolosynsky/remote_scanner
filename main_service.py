@@ -31,13 +31,13 @@ class RemoteScannerService():
 		self._scan_and_send(min_max_step, interval, time)
 
 
-	def _scan_and_send(min_max_step, interval, time):
+	def _scan_and_send(self, min_max_step, interval, time):
 
 		# args = rtl.scan(25,1700,200,1,10,file_name)
-		args = self.sdr.scan(min_max_step, interval, time, file_name)
+		args = self.sdr.scan(min_max_step, interval, time, self.file_name)
 			    
-		self._flatten_readings(file_name, flat_data_path)
-		self._plot(flat_data_path, img_path)
+		self._flatten_readings(self.file_name, self.flat_data_path)
+		self._plot(self.flat_data_path, self.img_path)
 
 		subject = "Scan taken on {}".format(datetime.now())
 		body = "Scan done with command {}".format(" ".join(args[:-1]))

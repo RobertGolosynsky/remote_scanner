@@ -1,7 +1,7 @@
 
 from collections import defaultdict
 import time
-
+import serial
 
 class Sim800():
 
@@ -13,13 +13,13 @@ class Sim800():
 
 		self.on_new_message_listener = None
 
-		self.set_listener("CMTI", lambda comm, args :  self._message_received_listener(args[1]) )
-		self.set_listener("CPIN", lambda comm, args :  self._setup() )	
+		self._set_listener("CMTI", lambda comm, args :  self._message_received_listener(args[1]) )
+		self._set_listener("CPIN", lambda comm, args :  self._setup() )	
 		
 		self._setup()
 
 	
-	def loop():	
+	def loop(self):	
 		while True:
 			time.sleep(0.01)
 			self._update()
@@ -37,7 +37,7 @@ class Sim800():
 			if end > -1:
 				self.buff+= s[:end+1]
 				print("processing", self.buff)
-				self._process(buff)
+				self._process(self.buff)
 				self.buff = s[end+1:]	
 			else:
 				self.buff+=s
@@ -62,7 +62,7 @@ class Sim800():
 
 	def _message_received_listener(self, message_id):
 		if not self.on_new_message_listener == None:
-			self.send_command("at+cmgr="+message_id, lambda raw: self.on_new_message_listener(raw) )
+			self._send_command("at+cmgr="+message_id, lambda raw: self.on_new_message_listener(raw) )
 
 
 	def _process(self, line):
