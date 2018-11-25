@@ -6,45 +6,28 @@ from email.mime.multipart import MIMEMultipart
 import os
 import sys
 from functools import wraps
-import subprocess
+import ppp_service
 import netifaces 
 import time
 import socket
-
+import config
  
 def is_connected():
-  try:
-    host = socket.gethostbyname("www.google.com")
-    s = socket.create_connection((host, 80), 2)
-    return True
-  except:
-     pass
-  return False
+	try:
+		host = socket.gethostbyname("www.google.com")
+		s = socket.create_connection((host, 80), 2)
+		return True
+	except:
+		pass
+	return False
 
 
 def with_internet(f):
 	@wraps(f)
 	def wrapped(*args, **kwargs):
-		print("Connecting to internet...")
-		subprocess.run(["pon", "rnet"])
-		start = time.time()
-		timeout = 20
-		retry_time = 1
-		while True:
-			if "ppp0" in netifaces.interfaces():
-				if is_connected():
-					print("Connected to internet!")
-					break
-				else:
-					print("ppp0 present, but no internet, reptying in 1 second".format(retry_time))
-			if time.time() - start > timeout:
-				print("Unable to connect. Timedout {}s".format(timeout))
-				break
-			time.sleep(retry_time)				
+		ppp_service.turn_on()
 		r = f(*args, **kwargs)
-		print("Disconecting from internet..")
-		subprocess.run(["poff", "rnet"])
-		print("Disconected from internet")
+		ppp_service.turn_off()
 		return r
 	return wrapped
 
@@ -83,7 +66,7 @@ class EmailSender:
 		composed = outer.as_string()
 
 		try:
-			with smtplib.SMTP('smtp.gmail.com', 587) as s:
+			with smtplib.SMTP(config.smtp_server, config.smtp_port) as s:
 				s.ehlo()
 				s.starttls()
 				s.ehlo()

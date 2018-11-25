@@ -5,9 +5,9 @@ from sim800 import Sim800
 from main_service import RemoteScannerService
 import subprocess
 import sys
+import ppp_service
 
-try:
-
+def main():
 	receiver = RTLSDR()
 
 	email_sender = EmailSender(gmail_user, gmail_password)
@@ -19,7 +19,8 @@ try:
 	modem.set_on_new_message_listener(main_service.process_raw_message_response)
 
 	modem.loop()
-
+try:
+	main()
 except Exception as e:
 	print(sys.exc_info())
-	subprocess.run(["poff","rnet"])
+	ppp_service.turn_off()
