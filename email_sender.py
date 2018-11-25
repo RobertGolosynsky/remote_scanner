@@ -34,9 +34,9 @@ def with_internet(f):
 class EmailSender:
 	
 	"""docstring for EmailSender"""
-	def __init__(self, gmail_user, gmail_password):
-		self.gmail_user = gmail_user
-		self.gmail_password = gmail_password
+	def __init__(self, mail_user, mail_password):
+		self.mail_user = mail_user
+		self.mail_password = mail_password
 	
 					
 	@with_internet
@@ -46,7 +46,7 @@ class EmailSender:
 		outer = MIMEMultipart()
 		outer['Subject'] = subject
 		outer['To'] = COMMASPACE.join(recipients)
-		outer['From'] = self.gmail_user
+		outer['From'] = self.mail_user
 		outer.preamble = 'You will not see this in a MIME-aware mail reader.\n'
 		body = MIMEText(body) 
 		outer.attach(body) 
@@ -70,8 +70,8 @@ class EmailSender:
 				s.ehlo()
 				s.starttls()
 				s.ehlo()
-				s.login(self.gmail_user, self.gmail_password)
-				s.sendmail(self.gmail_user, recipients, composed)
+				s.login(self.mail_user, self.mail_password)
+				s.sendmail(self.mail_user, recipients, composed)
 				s.close()
 			print("Email sent!")
 		except Exception as e:

@@ -1,4 +1,4 @@
-from config import *
+import config
 from rtlsdr import RTLSDR
 from email_sender import EmailSender
 from sim800 import Sim800
@@ -10,9 +10,13 @@ import ppp_service
 def main():
 	receiver = RTLSDR()
 
-	email_sender = EmailSender(gmail_user, gmail_password)
+	email_sender = EmailSender(config.mail_user, config.mail_password)
 
-	main_service = RemoteScannerService(receiver, email_sender, recipients, file_path, flat_data_path, img_path)
+	main_service = RemoteScannerService(
+		config.receiver, 
+		config.email_sender, config.recipients, 
+		config.file_path, config.flat_data_path, config.img_path
+		)
 
 	modem = Sim800(serial_port)
 
