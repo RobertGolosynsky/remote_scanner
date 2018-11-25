@@ -9,6 +9,7 @@ class Sim800():
 
 	def __init__(self, serial_port):
 		self.listeners = defaultdict(lambda : lambda comm, args: print("Unregistered command", comm, args))
+		self.serial_port = serial_port
 		self.port = serial.Serial(port=serial_port, baudrate=115200)
 
 		self.on_new_message_listener = None
@@ -60,9 +61,17 @@ class Sim800():
 		self.port.write("AT+CMGF=1\r\n".encode())
 
 
+	def _reinit(self):
+		self.port = serial.Serial(port=self.serial_port, baudrate=115200)
+
+
 	def _message_received_listener(self, message_id):
-		if not self.on_new_message_listener == None:
-			self._send_command("at+cmgr="+message_id, lambda raw: self.on_new_message_listener(raw) )
+		if self.on_new_message_listener is not None:
+			def wrapper(raw):
+				self.on_new_message_listener(raw)
+				self._reinit()
+
+			self._send_command("at+cmgr="+message_id, wrapper)
 
 
 	def _process(self, line):
