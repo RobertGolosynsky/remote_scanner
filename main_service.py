@@ -71,7 +71,7 @@ class RemoteScannerService():
 		for f in sums:
 		    ave[f] = sums[f] / counts[f]
 		with open(data_path, 'w') as file:
-			for f in ave:
+			for f in sorted(ave):
 			 	file.write('{},{}\n'.format(f, ave[f]))
 
 		
