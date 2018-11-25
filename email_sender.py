@@ -30,7 +30,7 @@ def with_internet(f):
 		subprocess.run(["poff", "rnet"])
 		print("Disconected from internet")
 		return r
-
+	return wrapped
 
 class EmailSender:
 	
