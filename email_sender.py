@@ -10,6 +10,28 @@ import subprocess
 import netifaces 
 import time
 
+
+def with_internet(f):
+	@wraps(f)
+	def wrapped(*args, **kwargs):
+		print("Connecting to internet...")
+		subprocess.run(["pon", "rnet"])
+		start = time.time()
+		timeout = 20
+		while True:
+			if "ppp0" in netifaces.interfaces():
+				print("Connected to internet!")
+				break
+			if time.time() - start > timeout:
+				print("Unable to connect. Timedout {}s".format(timeout))
+				break				
+		r = f(*args, **kwargs)
+		print("Disconecting from internet..")
+		subprocess.run(["poff", "rnet"])
+		print("Disconected from internet")
+		return r
+
+
 class EmailSender:
 	
 	"""docstring for EmailSender"""
@@ -17,25 +39,6 @@ class EmailSender:
 		self.gmail_user = gmail_user
 		self.gmail_password = gmail_password
 	
-	def with_internet(f):
-			@wraps(f)
-			def wrapped(*args, **kwargs):
-				print("Connecting to internet...")
-				subprocess.run(["pon", "rnet"])
-				start = time.time()
-				timeout = 20
-				while True:
-					if "ppp0" in netifaces.interfaces():
-						print("Connected to internet!")
-						break
-					if time.time() - start > timeout:
-						print("Unable to connect. Timedout {}s".format(timeout))
-						break				
-				r = f(*args, **kwargs)
-				print("Disconecting from internet..")
-				subprocess.run(["poff", "rnet"])
-				print("Disconected from internet")
-				return r
 					
 	@with_internet
 	def send(self, recipients, subject, body, attachments):
