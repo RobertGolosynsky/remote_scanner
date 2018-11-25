@@ -9,6 +9,17 @@ from functools import wraps
 import subprocess
 import netifaces 
 import time
+import socket
+
+ 
+def is_connected():
+  try:
+    host = socket.gethostbyname("www.google.com")
+    s = socket.create_connection((host, 80), 2)
+    return True
+  except:
+     pass
+  return False
 
 
 def with_internet(f):
@@ -18,13 +29,18 @@ def with_internet(f):
 		subprocess.run(["pon", "rnet"])
 		start = time.time()
 		timeout = 20
+		retry_time = 1
 		while True:
 			if "ppp0" in netifaces.interfaces():
-				print("Connected to internet!")
-				break
+				if is_connected():
+					print("Connected to internet!")
+					break
+				else:
+					print("ppp0 present, but no internet, reptying in 1 second".format(retry_time))
 			if time.time() - start > timeout:
 				print("Unable to connect. Timedout {}s".format(timeout))
-				break				
+				break
+			time.sleep(retry_time)				
 		r = f(*args, **kwargs)
 		print("Disconecting from internet..")
 		subprocess.run(["poff", "rnet"])
