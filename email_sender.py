@@ -5,7 +5,10 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 import os
 import sys
-
+from functools import wraps
+import subprocess
+import netifaces 
+import time
 
 class EmailSender:
 	
@@ -13,7 +16,29 @@ class EmailSender:
 	def __init__(self, gmail_user, gmail_password):
 		self.gmail_user = gmail_user
 		self.gmail_password = gmail_password
-
+	
+	def with_internet(f):
+    		@wraps(f)
+    		def wrapped(*args, **kwargs):
+			print("Connecting to internet...")
+        		subprocess.run(["pon", "rnet"])
+        		start = time.time()
+			timeout = 20
+			while True:
+				if "ppp0" in netifaces.interfaces():
+					print("Connected to internet!")
+					break
+				if time.time() - start > timeout:
+					print("Unable to connect. Timedout {}s".format(timeout))
+					break				
+			r = f(*args, **kwargs)
+			print("Disconecting from internet..")
+        		subprocess.run(["poff", "rnet"])
+			print("Disconected from internet")
+        		return r
+    		return wrapped
+	
+	@with_internet
 	def send(self, recipients, subject, body, attachments):
 		COMMASPACE = ', '
 
