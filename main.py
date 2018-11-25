@@ -13,12 +13,12 @@ def main():
 	email_sender = EmailSender(config.mail_user, config.mail_password)
 
 	main_service = RemoteScannerService(
-		config.receiver, 
-		config.email_sender, config.recipients, 
+		receiver, email_sender,
+		config.recipients,
 		config.file_path, config.flat_data_path, config.img_path
 		)
 
-	modem = Sim800(serial_port)
+	modem = Sim800(config.serial_port)
 
 	modem.set_on_new_message_listener(main_service.process_raw_message_response)
 
@@ -28,3 +28,4 @@ try:
 except Exception as e:
 	print(sys.exc_info())
 	ppp_service.turn_off()
+	raise
