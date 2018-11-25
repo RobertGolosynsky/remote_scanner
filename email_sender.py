@@ -76,8 +76,8 @@ class EmailSender:
 				encoders.encode_base64(msg)
 				msg.add_header('Content-Disposition', 'attachment', filename=os.path.basename(file))
 				outer.attach(msg)
-			except:
-				print("Unable to open one of the attachments. Error: ", sys.exc_info()[0])
+			except Exception as e:
+				print("Unable to open one of the attachments. Error: ", e)
 				raise
 
 		composed = outer.as_string()
@@ -91,6 +91,6 @@ class EmailSender:
 				s.sendmail(self.gmail_user, recipients, composed)
 				s.close()
 			print("Email sent!")
-		except:
-			print("Unable to send the email. Error: ", sys.exc_info()[0])
+		except Exception as e:
+			print("Unable to send the email. Error: ", e)
 			raise
