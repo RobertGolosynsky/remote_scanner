@@ -55,7 +55,7 @@ echo "flat_data_path=\"scan_flat.csv\"" >> $python_config_file
 #3. install python3 requirements
 pip install pigar
 pigar
-
+pip install -r requirements.txt 
 
 #4. install atp-get requirements
 sudo apt-get install -y rtl-sdr
