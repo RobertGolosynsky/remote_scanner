@@ -67,7 +67,7 @@ sudo apt-get install -y rtl-sdr
 
 
 #5. enable serial
-raspi-config nonint do_serial 2
+sudo raspi-config nonint do_serial 2
 
 
 #6. setup ppp (apn required)
