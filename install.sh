@@ -59,7 +59,7 @@ echo "flat_data_path=\"scan_flat.csv\"" >> $python_config_file
 pip3 install pipreqs
 echo "export PATH=$PATH:~/.local/bin" > ~/.bash_rc
 source /home/pi/.bash_rc
-pipreqs .
+pipreqs --force .
 pip3 install -r requirements.txt 
 
 #4. install atp-get requirements
