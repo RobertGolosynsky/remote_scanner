@@ -106,3 +106,10 @@ esac
 echo "Installation successful. 
 Use 'sudo systemctl start|stop|restart $service_name' to control the service."
 
+choice=$(ask "Reboot the device to finish instalation. Should reboot now?(y/n)" $yes_no_regex)
+case "$choice" in 
+  y|Y ) sudo reboot;;
+  n|N ) echo ok.;;
+  * ) cat picka.chu;;
+esac
+
