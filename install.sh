@@ -22,7 +22,10 @@ enable_service(){
 }
 
 #1. pull repo
-git clone git@github.com:RobertGolosynsky/remote_scanner.git
+sudo apt-get -y install git
+sudo apt-get -y install python3-pip
+git clone https://github.com/RobertGolosynsky/remote_scanner.git
+cd remote_scanner
 
 #2. setup config.py
 email_regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
@@ -53,17 +56,18 @@ echo "flat_data_path=\"scan_flat.csv\"" >> $python_config_file
 
 
 #3. install python3 requirements
-pip install pigar
-pigar
-pip install -r requirements.txt 
+pip3 install pipreqs
+echo "export PATH=$PATH:~/.local/bin" > ~/.bash_rc
+source /home/pi/.bash_rc
+pipreqs .
+pip3 install -r requirements.txt 
 
 #4. install atp-get requirements
 sudo apt-get install -y rtl-sdr
 
 
 #5. enable serial
-raspi-config nonint
-do_serial 2
+raspi-config nonint do_serial 2
 
 
 #6. setup ppp (apn required)
@@ -101,3 +105,4 @@ esac
 
 echo "Installation successful. 
 Use 'sudo systemctl start|stop|restart $service_name' to control the service."
+
