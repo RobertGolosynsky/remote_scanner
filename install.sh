@@ -75,8 +75,8 @@ apn=$(ask "APN of the GPRS provider (usually url)" ".+")
 ppp_config="rnet"
 
 cp ppp.template $ppp_config 
-sed -i -e 's/<APN>/$apn/g' $ppp_config
-sed -i -e 's/<UART_PORT>/$uart_port/g' $ppp_config
+sed -i -e "s/<APN>/$apn/g" $ppp_config
+sed -i -e "s/<UART_PORT>/$uart_port/g" $ppp_config
 sudo mv $ppp_config /etc/ppp/peers/$ppp_config
 
 sudo apt-get install -y ppp screen elinks
@@ -89,9 +89,9 @@ service_description="Remote scanner service"
 working_dir=pwd
 
 cp service.template $service_file 
-sed -i -e 's/<SERVICE_DESCRIPTION>/$service_description/g' $service_file
-sed -i -e 's/<MAIN_FILE>/main.py/g' $service_file
-sed -i -e 's/<DIR>/$working_dir/g' $service_file
+sed -i -e "s/<SERVICE_DESCRIPTION>/$service_description/g" $service_file
+sed -i -e "s/<MAIN_FILE>/main.py/g" $service_file
+sed -i -e "s/<DIR>/$working_dir/g" $service_file
 sudo mv $service_file /etc/systemd/system/$service_file
 
 #8. Promt user for enabling the service
