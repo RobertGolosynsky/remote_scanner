@@ -23,7 +23,7 @@ enable_service(){
 
 #1. pull repo
 
-if [ "$1" = "-f" ]; then
+if [ $1 == "-f" ]; then
 	sudo apt-get -y install git
 	sudo apt-get -y install python3-pip
 
@@ -35,7 +35,7 @@ cd remote_scanner
 email_regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
 port_regex="^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"
 
-if [ "$1" = "-f" ]; then
+if [ $1 == "-f" ]; then
 
 	echo "REMOTE SCANNER SETUP"
 
