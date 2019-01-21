@@ -23,58 +23,55 @@ enable_service(){
 
 #1. pull repo
 
-if [ $1 == "-f" ]; then
-	sudo apt-get -y install git
-	sudo apt-get -y install python3-pip
+sudo apt-get -y install git
+sudo apt-get -y install python3-pip
 
-	git clone https://github.com/RobertGolosynsky/remote_scanner.git
-fi
+git clone https://github.com/RobertGolosynsky/remote_scanner.git
+
 cd remote_scanner
 
 #2. setup config.py
 email_regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
 port_regex="^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"
 
-if [ $1 == "-f" ]; then
 
-	echo "REMOTE SCANNER SETUP"
+echo "REMOTE SCANNER SETUP"
 
-	recipient=$(ask "Reports email (reports@example.com)" $email_regex)
-	smtp_server=$(ask "SMTP server url (smtp.google.com)" ".+")
-	smtp_port=$(ask "SMTP server port (587, 465, etc.)" $port_regex)
-	email_user=$(ask "SMTP server login (email)" $email_regex)
-	email_password=$(ask "SMTP server password" ".+")
-	python_config_file=config.py
+recipient=$(ask "Reports email (reports@example.com)" $email_regex)
+smtp_server=$(ask "SMTP server url (smtp.google.com)" ".+")
+smtp_port=$(ask "SMTP server port (587, 465, etc.)" $port_regex)
+email_user=$(ask "SMTP server login (email)" $email_regex)
+email_password=$(ask "SMTP server password" ".+")
+python_config_file=config.py
 
-	echo "recipients=[\"$recipient\"]" > $python_config_file 
-	echo "smtp_server=\"$smtp_server\"" >> $python_config_file 
-	echo "smtp_port=\"$smtp_port\"" >> $python_config_file 
-	echo "mail_user=\"$email_user\"" >> $python_config_file 
-	echo "mail_password=\"$email_password\"" >> $python_config_file 
+echo "recipients=[\"$recipient\"]" > $python_config_file 
+echo "smtp_server=\"$smtp_server\"" >> $python_config_file 
+echo "smtp_port=\"$smtp_port\"" >> $python_config_file 
+echo "mail_user=\"$email_user\"" >> $python_config_file 
+echo "mail_password=\"$email_password\"" >> $python_config_file 
 
-	echo >> $python_config_file
+echo >> $python_config_file
 
-	apn=$(ask "APN of the GPRS provider (usually url)" ".+")
+apn=$(ask "APN of the GPRS provider (usually url)" ".+")
 
-	uart_port="/dev/serial0"
-	echo "serial_port=\"$uart_port\"" >> $python_config_file 
-	echo "file_path=\"scan.csv\"" >> $python_config_file 
-	echo "img_path=\"scan.png\"" >> $python_config_file 
-	echo "flat_data_path=\"scan_flat.csv\"" >> $python_config_file 
+uart_port="/dev/serial0"
+echo "serial_port=\"$uart_port\"" >> $python_config_file 
+echo "file_path=\"scan.csv\"" >> $python_config_file 
+echo "img_path=\"scan.png\"" >> $python_config_file 
+echo "flat_data_path=\"scan_flat.csv\"" >> $python_config_file 
 
 
 #3. install python3 requirements
-	pip3 install pipreqs
-	echo "export PATH=$PATH:~/.local/bin" > ~/.bash_rc
-	sudo source /home/pi/.bash_rc
-	pipreqs --force .
-	pip3 install -r requirements.txt 
+pip3 install pipreqs
+echo "export PATH=$PATH:~/.local/bin" > ~/.bash_rc
+sudo source /home/pi/.bash_rc
+pipreqs --force .
+pip3 install -r requirements.txt 
 
 #4. install atp-get requirements
 
-	sudo apt-get install -y rtl-sdr
-	sudo apt-get install libatlas-base-dev
-fi
+sudo apt-get install -y rtl-sdr
+sudo apt-get install libatlas-base-dev
 #5. enable serial
 sudo raspi-config nonint do_serial 2
 
