@@ -64,7 +64,7 @@ echo "flat_data_path=\"scan_flat.csv\"" >> $python_config_file
 #3. install python3 requirements
 pip3 install pipreqs
 echo "export PATH=$PATH:~/.local/bin" > ~/.bash_rc
-sudo source /home/pi/.bash_rc
+source /home/pi/.bash_rc
 pipreqs --force .
 pip3 install -r requirements.txt 
 
