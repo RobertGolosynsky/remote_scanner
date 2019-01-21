@@ -43,8 +43,8 @@ python_config_file=config.py
 echo "recipients=[\"$recipient\"]" > $python_config_file 
 echo "smtp_server=\"$smtp_server\"" >> $python_config_file 
 echo "smtp_port=\"$smtp_port\"" >> $python_config_file 
-echo "gmail_user=\"$email_user\"" >> $python_config_file 
-echo "gmail_password=\"$email_password\"" >> $python_config_file 
+echo "mail_user=\"$email_user\"" >> $python_config_file 
+echo "mail_password=\"$email_password\"" >> $python_config_file 
 
 echo >> $python_config_file
 
@@ -64,7 +64,7 @@ pip3 install -r requirements.txt
 
 #4. install atp-get requirements
 sudo apt-get install -y rtl-sdr
-
+sudo apt-get install libatlas-base-dev
 
 #5. enable serial
 sudo raspi-config nonint do_serial 2

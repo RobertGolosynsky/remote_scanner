@@ -3,7 +3,10 @@ import serial
 from collections import defaultdict
 import re
 from numpy import genfromtxt  
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
+
 from datetime import datetime
 
 
