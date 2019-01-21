@@ -48,6 +48,8 @@ echo "mail_password=\"$email_password\"" >> $python_config_file
 
 echo >> $python_config_file
 
+apn=$(ask "APN of the GPRS provider (usually url)" ".+")
+
 uart_port="/dev/serial0"
 echo "serial_port=\"$uart_port\"" >> $python_config_file 
 echo "file_path=\"scan.csv\"" >> $python_config_file 
@@ -71,7 +73,7 @@ sudo raspi-config nonint do_serial 2
 
 
 #6. setup ppp (apn required)
-apn=$(ask "APN of the GPRS provider (usually url)" ".+")
+
 ppp_config="rnet"
 
 cp ppp.template $ppp_config 
