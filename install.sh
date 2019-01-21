@@ -79,13 +79,16 @@ sudo raspi-config nonint do_serial 2
 #6. setup ppp (apn required)
 
 ppp_config="rnet"
+uart_port_escaped="${uart_port//\//\\/}"
 
 cp ppp.template $ppp_config 
 sed -i -e "s/<APN>/$apn/g" $ppp_config
-sed -i -e "s/<UART_PORT>/$uart_port/g" $ppp_config
+sed -i -e "s/<UART_PORT>/$uart_port_escaped/g" $ppp_config
 sudo mv $ppp_config /etc/ppp/peers/$ppp_config
 
+sudo usermod -a -G dip pi
 sudo apt-get install -y ppp screen elinks
+
 
 
 #7. setup service 
@@ -100,6 +103,7 @@ sed -i -e "s/<SERVICE_DESCRIPTION>/$service_description/g" $service_file
 sed -i -e "s/<MAIN_FILE>/main.py/g" $service_file
 sed -i -e "s/<DIR>/$working_dir/g" $service_file
 sudo mv $service_file /etc/systemd/system/$service_file
+
 
 #8. Promt user for enabling the service
 yes_no_regex="^[YyNn]$"
