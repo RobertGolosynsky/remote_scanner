@@ -86,7 +86,7 @@ sudo apt-get install -y ppp screen elinks
 service_name="remote_scanner"
 service_file="$service_name.service"
 service_description="Remote scanner service"
-working_dir=pwd
+working_dir=$(pwd)
 
 cp service.template $service_file 
 sed -i -e "s/<SERVICE_DESCRIPTION>/$service_description/g" $service_file
