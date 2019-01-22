@@ -13,9 +13,10 @@ class Sim800():
 		self.port = serial.Serial(port=serial_port, baudrate=115200)
 
 		self.on_new_message_listener = None
-
+		
 		self._set_listener("CMTI", lambda comm, args :  self._message_received_listener(args[1]) )
 		self._set_listener("CPIN", lambda comm, args :  self._setup() )	
+		self._set_listener("CPMS", lambda comm, args :  self._clear_sms_storage(args) )	
 		
 		self._setup()
 
@@ -57,16 +58,19 @@ class Sim800():
 
 	def _setup(self):
 		self.port.write("AT\r\n".encode())
-		time.sleep(1)
+		self.port.flush()
 		self.port.write("AT+CMGF=1\r\n".encode())
-		time.sleep(1)
-		self.port.write("AT+CPMS=\"ME\",\"ME\",\"ME\"".encode())
+		self.port.flush()
+		self.port.write("AT+CPMS=\"ME\",\"ME\",\"ME\"\r\n".encode())
+		self.port.flush()
 
 	def _reinit(self):
 		self.port.close()
 		self.port = serial.Serial(port=self.serial_port, baudrate=115200)
 
-
+	def _clear_sms_storage(self, args):
+		self._send_command("at+cmgd={}, 4".format(args[-2]))
+	
 	def _message_received_listener(self, message_id):
 		if self.on_new_message_listener is not None:
 			def wrapper(raw):
