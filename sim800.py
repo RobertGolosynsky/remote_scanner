@@ -60,6 +60,7 @@ class Sim800():
 		time.sleep(1)
 		self.port.write("AT+CMGF=1\r\n".encode())
 		time.sleep(1)
+		self.port.write("AT+CPMS=\"ME\",\"ME\",\"ME\"".encode())
 
 	def _reinit(self):
 		self.port.close()
