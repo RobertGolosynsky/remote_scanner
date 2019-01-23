@@ -9,7 +9,7 @@ class RTLSDR:
 
 	def scan(self, min_max_step, interval_s, time, filename):
 		args = ['rtl_power']
-		if interval_s = '0':
+		if interval_s == '0':
   			args.append('-1')
 		else:
 			args.append('-i')
@@ -23,3 +23,4 @@ class RTLSDR:
 		response = subprocess.run(args)
 		response.check_returncode()
 		return args
+

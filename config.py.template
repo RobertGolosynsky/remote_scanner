@@ -7,5 +7,5 @@ smtp_port = 'smtp port'
 serial_port = "serial port of the device"
 
 file_path = "scan.csv"
-img_path = "scan.png"
+img_path = "scan.eps"
 flat_data_path = "scan_flat.csv"

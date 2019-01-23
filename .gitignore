@@ -1,6 +1,7 @@
 __pycache__/
 config.py
 *.png
+*.eps
 *.csv
 *.pyc
 *.out
