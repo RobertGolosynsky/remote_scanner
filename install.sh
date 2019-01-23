@@ -63,8 +63,8 @@ pip3 install -r requirements.txt
 
 #4. install atp-get requirements
 
-sudo apt-get install -y rtl-sdr
-sudo apt-get install -y libatlas-base-dev
+sudo apt-get -y install rtl-sdr
+sudo apt-get -y install libatlas-base-dev
 #5. enable serial
 sudo raspi-config nonint do_serial 2
 
@@ -80,7 +80,7 @@ sed -i -e "s/<UART_PORT>/$uart_port_escaped/g" $ppp_config
 sudo mv $ppp_config /etc/ppp/peers/$ppp_config
 
 sudo usermod -a -G dip pi
-sudo apt-get install -y ppp screen elinks
+sudo apt-get -y install ppp screen elinks
 
 
 
