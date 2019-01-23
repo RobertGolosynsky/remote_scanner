@@ -61,10 +61,32 @@ source /home/pi/.bash_rc
 pipreqs --force .
 pip3 install -r requirements.txt 
 
-#4. install atp-get requirements
+#4. install trl-sdr requirements
 
-sudo apt-get -y install rtl-sdr
-sudo apt-get -y install libatlas-base-dev
+sudo apt-get -y install cmake
+sudo apt-get -y install build-essential
+sudo apt-get -y install libusb-1.0-0-dev
+
+rm -rf rtl-sdr
+git clone git@github.com:keenerd/rtl-sdr.git
+
+cd rtl-sdr/
+mkdir build
+cd build
+cmake ../ -DINSTALL_UDEV_RULES=ON
+make
+sudo make install
+
+sudo ldconfig
+
+sudo cp ../rtl-sdr.rules /etc/udev/rules.d/
+
+blacklist="blacklist-rtl.conf"
+echo 'blacklist dvb_usb_rtl28xxu' > $blacklist
+echo 'blacklist rtl2832' >> $blacklist
+echo 'blacklist rtl2830' >> $blacklist
+sudo mv $blacklist /etc/modprobe.d
+
 #5. enable serial
 sudo raspi-config nonint do_serial 2
 
