@@ -78,9 +78,9 @@ class RemoteScannerService():
 
 	def _plot(self, data_path, img_path):
 		data = genfromtxt(data_path, delimiter=',', names=['x','y'])
+		plt.figure()
 		plt.xlabel('Frequency (MHz)')
 		plt.ylabel('Power (dbm)')
 		plt.plot([x/1000000 for x in data['x']], data['y'])
 		plt.savefig(img_path)
-
 

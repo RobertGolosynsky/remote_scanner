@@ -15,7 +15,7 @@ class Sim800():
 		self.on_new_message_listener = None
 		
 		self._set_listener("CMTI", lambda comm, args :  self._message_received_listener(args[1]) )
-		self._set_listener("CPIN", lambda comm, args :  self._setup() )	
+		self._set_listener("CPIN", lambda comm, args :  self._setup() )
 		self._set_listener("CPMS", lambda comm, args :  self._clear_sms_storage(args) )	
 		
 		self._setup()
@@ -61,7 +61,7 @@ class Sim800():
 		self.port.flush()
 		self.port.write("AT+CMGF=1\r\n".encode())
 		self.port.flush()
-		self.port.write("AT+CPMS=\"ME\",\"ME\",\"ME\"\r\n".encode())
+		self.port.write("AT+CPMS=\"SM\",\"SM\",\"SM\"\r\n".encode())
 		self.port.flush()
 
 	def _reinit(self):
@@ -69,7 +69,9 @@ class Sim800():
 		self.port = serial.Serial(port=self.serial_port, baudrate=115200)
 
 	def _clear_sms_storage(self, args):
-		self._send_command("at+cmgd={}, 4".format(args[-2]))
+		used = int(args[-2])
+		if used>0:
+			self._send_command("at+cmgd={}, 4".format(used))
 	
 	def _message_received_listener(self, message_id):
 		if self.on_new_message_listener is not None:
@@ -88,3 +90,4 @@ class Sim800():
 			args = line[colon_pos:].split(",")
 			args = [arg.strip() for arg in args ]
 			self.listeners[comm](comm, args)
+
