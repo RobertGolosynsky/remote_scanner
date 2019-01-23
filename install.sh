@@ -64,7 +64,7 @@ pip3 install -r requirements.txt
 #4. install atp-get requirements
 
 sudo apt-get install -y rtl-sdr
-sudo apt-get install libatlas-base-dev
+sudo apt-get install -y libatlas-base-dev
 #5. enable serial
 sudo raspi-config nonint do_serial 2
 
