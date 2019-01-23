@@ -1,7 +1,7 @@
 recipients = ["recipient mail", "second recipient"]
 
-gmail_user = 'here goes your mail user login'
-gmail_password = 'mail user password'
+mail_user = 'here goes your mail user login'
+mail_password = 'mail user password'
 smtp_server = 'smtp connection url'
 smtp_port = 'smtp port'
 serial_port = "serial port of the device"
