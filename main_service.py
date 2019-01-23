@@ -14,10 +14,10 @@ class RemoteScannerService():
 	
 	sms_re = re.compile("^[+].+\n((.*\n)+)OK", re.MULTILINE)
 
-	def __init__(self, sdr, email_sender, recipients, file_name , flat_data_path, img_path):
+	def __init__(self, sdr, email_sender, recipient, file_name , flat_data_path, img_path):
 		self.sdr = sdr
 		self.email_sender = email_sender
-		self.recipients = recipients
+		self.recipient = recipient
 		self.file_name = file_name
 		self.flat_data_path = flat_data_path
 		self.img_path = img_path
@@ -41,7 +41,7 @@ class RemoteScannerService():
 
 		subject = "Scan taken on {}".format(datetime.now())
 		body = "Scan done with command {}".format(" ".join(args[:-1]))
-		self.email_sender.send(self.recipients, subject, body, [self.file_name , self.flat_data_path, self.img_path])
+		self.email_sender.send(self.recipient, subject, body, [self.file_name , self.flat_data_path, self.img_path])
 
 
 	def _flatten_readings(self, source_path, data_path):

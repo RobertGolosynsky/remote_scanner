@@ -10,11 +10,11 @@ import ppp_service
 def main():
 	receiver = RTLSDR()
 
-	email_sender = EmailSender(config.mail_user, config.mail_password)
+	email_sender = EmailSender(config.sendgrid_apikey)
 
 	main_service = RemoteScannerService(
 		receiver, email_sender,
-		config.recipients,
+		config.recipient,
 		config.file_path, config.flat_data_path, config.img_path
 		)
 

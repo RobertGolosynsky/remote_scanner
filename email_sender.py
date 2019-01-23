@@ -1,58 +1,74 @@
-import smtplib
-from email import encoders
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-import os
-import sys
 from ppp_service import with_internet
-import time
 import config
+import sys
+
+
+import base64
+import sendgrid
+from sendgrid.helpers.mail import Email, Content, Mail, Attachment
+import urllib.request as urllib
+
+import base64
+import sendgrid
+import os
+from sendgrid.helpers.mail import Email, Content, Mail, Attachment
+import urllib.request as urllib
+
 
 
 class EmailSender:
 	
 	
-	def __init__(self, mail_user, mail_password):
-		self.mail_user = mail_user
-		self.mail_password = mail_password
+	def __init__(self, api_key):
+		self.api_key = api_key
 	
+	def _decide_content_type(self, file_path):
+		filename = os.path.basename(file_path)
+		if filename.endswith(".csv"):
+			return "text/csv"
+		if filename.endswith(".eps"):
+			return "application/postscript"
+		return "application/octet-stream"
+
 					
 	@with_internet
-	def send(self, recipients, subject, body, attachments):
+	def send(self, recipient, subject, body, attachments):
 		COMMASPACE = ', '
 
 		outer = MIMEMultipart()
 		outer['Subject'] = subject
 		outer['To'] = COMMASPACE.join(recipients)
 		outer['From'] = self.mail_user
-		outer.preamble = 'You will not see this in a MIME-aware mail reader.\n'
-		body = MIMEText(body) 
-		outer.attach(body) 
+		
+		sg = sendgrid.SendGridAPIClient(apikey=self.api_key)
+		from_email = Email("remotescanner1337@gmail.com")
+		to_email = Email(recipient)
+		content = Content("text/html", body)
 
-		for file in attachments:
+		mail = Mail(from_email, subject, to_email, content)
+
+		for file_path in attachments:
 			try:
-				with open(file, 'rb') as fp:
-					msg = MIMEBase('application', "octet-stream")
-					msg.set_payload(fp.read())
-				encoders.encode_base64(msg)
-				msg.add_header('Content-Disposition', 'attachment', filename=os.path.basename(file))
-				outer.attach(msg)
+				with open(file_path,'rb') as f:
+				    data = f.read()
+				    f.close()
+
+				encoded = base64.b64encode(data).decode()
+
+				attachment = Attachment()
+				attachment.content = encoded
+				attachment.type = _decide_content_type(file_path)
+				attachment.filename = os.path.basename(file_path)
+				attachment.disposition = "attachment"
+				mail.add_attachment(attachment)
+
 			except Exception as e:
 				print("Unable to open one of the attachments. Error: ", e)
 				raise
 
-		composed = outer.as_string()
-
 		try:
-			with smtplib.SMTP(config.smtp_server, config.smtp_port) as s:
-				s.ehlo()
-				s.starttls()
-				s.ehlo()
-				s.login(self.mail_user, self.mail_password)
-				s.sendmail(self.mail_user, recipients, composed)
-				s.close()
-			print("Email sent!")
-		except Exception as e:
-			print("Unable to send the email. Error: ", e)
-			raise
+		    response = sg.client.mail.send.post(request_body=mail.get())
+		except urllib.HTTPError as e:
+		    print(e.read())
+		    raise
+		print("Email sent!")

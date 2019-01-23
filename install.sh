@@ -33,32 +33,25 @@ cd remote_scanner
 #2. setup config.py
 email_regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
 port_regex="^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"
+uart_port="/dev/serial0"
 
 
 echo "REMOTE SCANNER SETUP"
 
 recipient=$(ask "Reports email (reports@example.com)" $email_regex)
-smtp_server=$(ask "SMTP server url (smtp.google.com)" ".+")
-smtp_port=$(ask "SMTP server port (587, 465, etc.)" $port_regex)
-email_user=$(ask "SMTP server login (email)" $email_regex)
-email_password=$(ask "SMTP server password" ".+")
+api_key=$(ask "SendGrid API key (from sendgrid console)" ".*")
+apn=$(ask "APN of the GPRS provider (usually url)" ".*")
+
 python_config_file=config.py
 
-echo "recipients=[\"$recipient\"]" > $python_config_file 
-echo "smtp_server=\"$smtp_server\"" >> $python_config_file 
-echo "smtp_port=\"$smtp_port\"" >> $python_config_file 
-echo "mail_user=\"$email_user\"" >> $python_config_file 
-echo "mail_password=\"$email_password\"" >> $python_config_file 
+cp config.py.template $python_config_file 
+sed -i -e "s|<RECIPIENT>|$recipient|g" $python_config_file
+sed -i -e "s|<SENDGRID_APIKEY>|$api_key|g" $python_config_file
 
-echo >> $python_config_file
-
-apn=$(ask "APN of the GPRS provider (usually url)" ".+")
-
-uart_port="/dev/serial0"
-echo "serial_port=\"$uart_port\"" >> $python_config_file 
-echo "file_path=\"scan.csv\"" >> $python_config_file 
-echo "img_path=\"scan.png\"" >> $python_config_file 
-echo "flat_data_path=\"scan_flat.csv\"" >> $python_config_file 
+sed -i -e "s|<SERIAL_PORT>|$uart_port|g" $python_config_file
+sed -i -e "s|<RAW_DATA_FILE>|raw_data|g" $python_config_file
+sed -i -e "s|<FLAT_DATA_FILE>|flat_data|g" $python_config_file
+sed -i -e "s|<IMAGE_FILE>|graph|g" $python_config_file
 
 
 #3. install python3 requirements

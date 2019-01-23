@@ -1,11 +1,9 @@
-recipients = ["recipient mail", "second recipient"]
+#MAIN SETUP
+recipient="<RECIPIENT>" # Recipient email, to which the reports are sent
+sendgrid_apikey="<SENDGRID_APIKEY>" # Used for authorization with sendgrid web api
 
-gmail_user = 'here goes your mail user login'
-gmail_password = 'mail user password'
-smtp_server = 'smtp connection url'
-smtp_port = 'smtp port'
-serial_port = "serial port of the device"
-
-file_path = "scan.csv"
-img_path = "scan.eps"
-flat_data_path = "scan_flat.csv"
+#MISC SETUP
+serial_port="<SERIAL_PORT>" # Serial port of the GSM/GPRS Modem
+file_path="<RAW_DATA_FILE>.csv" # Raw reading file name 
+flat_data_path="<FLAT_DATA_FILE>.csv" # x,y processed data file name
+img_path="<IMAGE_FILE>.eps" # Graph image file name
