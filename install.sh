@@ -25,7 +25,7 @@ enable_service(){
 
 sudo apt-get -y install git
 sudo apt-get -y install python3-pip
-rm -rf remote_scanner
+sudo rm -rf remote_scanner
 git clone https://github.com/RobertGolosynsky/remote_scanner.git
 
 cd remote_scanner
