@@ -70,6 +70,7 @@ sudo raspi-config nonint do_serial 2
 
 
 #6. setup ppp (apn required)
+sudo apt-get -y install ppp screen elinks
 
 ppp_config="rnet"
 uart_port_escaped="${uart_port//\//\\/}"
@@ -80,7 +81,7 @@ sed -i -e "s/<UART_PORT>/$uart_port_escaped/g" $ppp_config
 sudo mv $ppp_config /etc/ppp/peers/$ppp_config
 
 sudo usermod -a -G dip pi
-sudo apt-get -y install ppp screen elinks
+
 
 
 
