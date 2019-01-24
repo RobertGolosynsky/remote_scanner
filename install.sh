@@ -107,7 +107,9 @@ pip3 install pipreqs
 pipreqs --force .
 pip3 install -r requirements.txt 
 
-# install trl-sdr requirements
+sudo apt-get install libatlas-base-dev # fixed numpy multiarray error on import libf77blas.so.3
+
+# install rtl-sdr requirements
 
 sudo apt-get -y install cmake
 sudo apt-get -y install build-essential
