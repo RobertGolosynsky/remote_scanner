@@ -56,6 +56,7 @@ choice=$(ask "Do you posses the password for the included SendGrid API key?(y/n)
 case "$choice" in 
   y|Y ) 
 		git clone https://github.com/nodesocket/cryptr.git
+		sudo rm /usr/local/bin/cryptr
 		sudo ln -s "$PWD"/cryptr/cryptr.bash /usr/local/bin/cryptr
   		enc_key_name="sendgrid.key.aes"
 		c=1
