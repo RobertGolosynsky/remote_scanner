@@ -36,8 +36,9 @@ echo "REMOTE SCANNER SETUP"
 choice=$(ask "Do you posses the password for the included SendGrid API key?(y/n)" $yes_no_regex)
 case "$choice" in 
   y|Y ) 
+  		enc_key_name="sendgrid.key.enc"
 		wget https://raw.githubusercontent.com/RobertGolosynsky/remote_scanner/master/pass.md5
-		wget https://github.com/RobertGolosynsky/remote_scanner/blob/master/sendgrid.key.enc?raw=true
+		wget -O $enc_key_name https://github.com/RobertGolosynsky/remote_scanner/blob/master/sendgrid.key.enc?raw=true
 		c=1
 		quest="Enter password"
 		while : ; do
@@ -51,7 +52,7 @@ case "$choice" in
 			fi
 			((c++))
 		done
-		api_key=openssl enc -aes-256-cbc -d -in sendgrid.key.enc -k $password	
+		api_key=openssl enc -aes-256-cbc -d -in $enc_key_name -k $password	
 ;;
   n|N ) 
 		api_key=$(ask "Type in your SendGrid API key (from sendgrid console)" ".*")
