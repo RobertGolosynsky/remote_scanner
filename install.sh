@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-
+SECONDS=0
 
 email_regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
 port_regex="^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"
@@ -28,22 +28,19 @@ enable_service(){
 }
 
 
-
 # Presetup
-
 echo "export PATH=$PATH:~/.local/bin" > ~/.bash_rc
 source /home/pi/.bash_rc
 
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
-# pull repo
 
+# pull repo
 sudo apt-get -y install git
 sudo apt-get -y install python3-pip
 sudo rm -rf remote_scanner
 git clone https://github.com/RobertGolosynsky/remote_scanner.git
-
 
 
 # Decoding SendGrid api key, recorging email for reports, APN
@@ -86,8 +83,8 @@ esac
 recipient=$(ask "Reports email (reports@example.com)" $email_regex)
 apn=$(ask "APN of the GPRS provider (usually url)" ".*")
 
-# setup config.py
 
+# setup config.py
 uart_port="/dev/serial0"
 
 python_config_file=config.py
@@ -109,8 +106,8 @@ pip3 install -r requirements.txt
 
 sudo apt-get install libatlas-base-dev # fixed numpy multiarray error on import libf77blas.so.3
 
-# install rtl-sdr requirements
 
+# install rtl-sdr requirements
 sudo apt-get -y install cmake
 sudo apt-get -y install build-essential
 sudo apt-get -y install libusb-1.0-0-dev
@@ -137,6 +134,7 @@ echo 'blacklist rtl2832' >> $blacklist
 echo 'blacklist rtl2830' >> $blacklist
 sudo mv $blacklist /etc/modprobe.d
 
+
 # enable serial
 sudo raspi-config nonint do_serial 2
 
@@ -157,8 +155,6 @@ sudo mv $ppp_config /etc/ppp/peers/$ppp_config
 sudo usermod -a -G dip pi
 
 
-
-
 # setup service 
 service_name="remote_scanner"
 service_file="$service_name.service"
@@ -174,7 +170,6 @@ sudo mv $service_file /etc/systemd/system/$service_file
 
 
 # Promt user for enabling the service
-
 choice=$(ask "Should the service be started on boot?(y/n)" $yes_no_regex)
 case "$choice" in 
   y|Y ) enable_service $service_name;;
@@ -182,8 +177,10 @@ case "$choice" in
   * ) cat picka.chu;;
 esac
 
-echo "Installation successful. 
-Use 'sudo systemctl start|stop|restart $service_name' to control the service."
+
+duration=$SECONDS
+echo "Installation successfully done in $(($duration / 60))m:$(($duration % 60))s."
+echo "Use 'sudo systemctl start|stop|restart $service_name' to control the service."
 
 choice=$(ask "Reboot the device to finish instalation. Should reboot now?(y/n)" $yes_no_regex)
 case "$choice" in 
