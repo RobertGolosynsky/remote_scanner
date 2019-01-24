@@ -27,12 +27,9 @@ enable_service(){
 }
 
 
-#0. Presetup
 
-sudo apt-get -y update
-sudo apt-get -y upgrade
 
-#1. Decoding SendGrid api key, recorging email for reports, APN
+#0. Decoding SendGrid api key, recorging email for reports, APN
 echo "REMOTE SCANNER SETUP"
 
 
@@ -63,8 +60,12 @@ esac
 
 recipient=$(ask "Reports email (reports@example.com)" $email_regex)
 apn=$(ask "APN of the GPRS provider (usually url)" ".*")
+#1. Presetup
 
-#1. pull repo
+sudo apt-get -y update
+sudo apt-get -y upgrade
+
+#2. pull repo
 
 sudo apt-get -y install git
 sudo apt-get -y install python3-pip
@@ -73,7 +74,7 @@ git clone https://github.com/RobertGolosynsky/remote_scanner.git
 
 cd remote_scanner
 
-#2. setup config.py
+#3. setup config.py
 
 uart_port="/dev/serial0"
 
@@ -89,14 +90,14 @@ sed -i -e "s|<FLAT_DATA_FILE>|flat_data|g" $python_config_file
 sed -i -e "s|<IMAGE_FILE>|graph|g" $python_config_file
 
 
-#3. install python3 requirements
+#4. install python3 requirements
 pip3 install pipreqs
 echo "export PATH=$PATH:~/.local/bin" > ~/.bash_rc
 source /home/pi/.bash_rc
 pipreqs --force .
 pip3 install -r requirements.txt 
 
-#4. install trl-sdr requirements
+#5. install trl-sdr requirements
 
 sudo apt-get -y install cmake
 sudo apt-get -y install build-essential
@@ -122,11 +123,11 @@ echo 'blacklist rtl2832' >> $blacklist
 echo 'blacklist rtl2830' >> $blacklist
 sudo mv $blacklist /etc/modprobe.d
 
-#5. enable serial
+#6. enable serial
 sudo raspi-config nonint do_serial 2
 
 
-#6. setup ppp (apn required)
+#7. setup ppp (apn required)
 sudo apt-get -y install ppp screen elinks
 
 ppp_config="rnet"
@@ -142,7 +143,7 @@ sudo usermod -a -G dip pi
 
 
 
-#7. setup service 
+#8. setup service 
 service_name="remote_scanner"
 service_file="$service_name.service"
 service_description="Remote scanner service"
@@ -156,7 +157,7 @@ sed -i -e "s/<DIR>/$working_dir/g" $service_file
 sudo mv $service_file /etc/systemd/system/$service_file
 
 
-#8. Promt user for enabling the service
+#9. Promt user for enabling the service
 
 choice=$(ask "Should the service be started on boot?(y/n)" $yes_no_regex)
 case "$choice" in 
