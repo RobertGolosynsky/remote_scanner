@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+
+email_regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
+port_regex="^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"
+yes_no_regex="^[YyNn]$"
+
 ask(){
 	
 	local ans=""
@@ -27,6 +32,38 @@ enable_service(){
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
+#1. Decoding SendGrid api key, recorging email for reports, APN
+echo "REMOTE SCANNER SETUP"
+
+
+choice=$(ask "Do you posses the password for the included SendGrid API key?(y/n)" $yes_no_regex)
+case "$choice" in 
+  y|Y ) 
+		c=1
+		quest="Enter password"
+		while : ; do
+			if [[ "$c" -eq 1 ]]; then
+		    	read -p "$quest:" password
+		    else 
+		    	read -p "$quest (try $c):" password
+			fi
+			if md5sum --status -c pass.md5; then
+			    break
+			fi
+			((c++))
+		done
+		api_key=openssl enc -aes-256-cbc -d -in sendgrid.key.enc -k $password	
+;;
+  n|N ) 
+		api_key=$(ask "Type in your SendGrid API key (from sendgrid console)" ".*")
+;;
+  * ) cat picka.chu;;
+esac
+
+
+recipient=$(ask "Reports email (reports@example.com)" $email_regex)
+apn=$(ask "APN of the GPRS provider (usually url)" ".*")
+
 #1. pull repo
 
 sudo apt-get -y install git
@@ -37,16 +74,8 @@ git clone https://github.com/RobertGolosynsky/remote_scanner.git
 cd remote_scanner
 
 #2. setup config.py
-email_regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
-port_regex="^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"
+
 uart_port="/dev/serial0"
-
-
-echo "REMOTE SCANNER SETUP"
-
-recipient=$(ask "Reports email (reports@example.com)" $email_regex)
-api_key=$(ask "SendGrid API key (from sendgrid console)" ".*")
-apn=$(ask "APN of the GPRS provider (usually url)" ".*")
 
 python_config_file=config.py
 
@@ -128,7 +157,7 @@ sudo mv $service_file /etc/systemd/system/$service_file
 
 
 #8. Promt user for enabling the service
-yes_no_regex="^[YyNn]$"
+
 choice=$(ask "Should the service be started on boot?(y/n)" $yes_no_regex)
 case "$choice" in 
   y|Y ) enable_service $service_name;;
