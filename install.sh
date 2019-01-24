@@ -113,6 +113,8 @@ sudo apt-get -y install cmake
 sudo apt-get -y install build-essential
 sudo apt-get -y install libusb-1.0-0-dev
 
+cd ..
+
 rm -rf rtl-sdr
 git clone https://github.com/keenerd/rtl-sdr.git
 
@@ -139,6 +141,7 @@ sudo raspi-config nonint do_serial 2
 
 # setup ppp (apn required)
 sudo apt-get -y install ppp screen elinks
+cd remote_scanner
 
 ppp_config="rnet"
 uart_port_escaped="${uart_port//\//\\/}"
