@@ -114,7 +114,7 @@ sudo apt-get -y install build-essential
 sudo apt-get -y install libusb-1.0-0-dev
 
 rm -rf rtl-sdr
-git clone git@github.com:keenerd/rtl-sdr.git
+git clone https://github.com/RobertGolosynsky/remote_scanner.git
 
 cd rtl-sdr/
 mkdir build
