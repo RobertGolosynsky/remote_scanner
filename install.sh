@@ -52,7 +52,7 @@ case "$choice" in
 			fi
 			((c++))
 		done
-		api_key=$(openssl enc -aes-256-cbc -d -in $enc_key_name -k $password)	
+		api_key=$(gpg --batch --yes --passphrase $password -d < $enc_key_name)	
 ;;
   n|N ) 
 		api_key=$(ask "Type in your SendGrid API key (from sendgrid console)" ".*")
