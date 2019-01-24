@@ -21,6 +21,12 @@ enable_service(){
 	sudo systemctl enable $1
 }
 
+
+#0. Presetup
+
+sudo apt-get -y update
+sudo apt-get -y upgrade
+
 #1. pull repo
 
 sudo apt-get -y install git
