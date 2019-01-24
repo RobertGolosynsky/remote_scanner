@@ -33,12 +33,6 @@ class EmailSender:
 					
 	@with_internet
 	def send(self, recipient, subject, body, attachments):
-		COMMASPACE = ', '
-
-		outer = MIMEMultipart()
-		outer['Subject'] = subject
-		outer['To'] = COMMASPACE.join(recipients)
-		outer['From'] = self.mail_user
 		
 		sg = sendgrid.SendGridAPIClient(apikey=self.api_key)
 		from_email = Email("remotescanner1337@gmail.com")
