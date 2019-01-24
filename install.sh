@@ -37,8 +37,8 @@ choice=$(ask "Do you posses the password for the included SendGrid API key?(y/n)
 case "$choice" in 
   y|Y ) 
   		enc_key_name="sendgrid.key.enc"
-		wget https://raw.githubusercontent.com/RobertGolosynsky/remote_scanner/master/pass.md5
-		wget -O $enc_key_name https://github.com/RobertGolosynsky/remote_scanner/blob/master/sendgrid.key.enc?raw=true
+		curl https://raw.githubusercontent.com/RobertGolosynsky/remote_scanner/master/pass.md5 > pass.md5
+		curl https://github.com/RobertGolosynsky/remote_scanner/blob/master/sendgrid.key.enc?raw=true > $enc_key_name
 		c=1
 		quest="Enter password"
 		while : ; do
