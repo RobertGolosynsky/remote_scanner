@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-cat banner.txt
 
 email_regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
 port_regex="^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"
@@ -45,9 +44,12 @@ sudo apt-get -y install python3-pip
 sudo rm -rf remote_scanner
 git clone https://github.com/RobertGolosynsky/remote_scanner.git
 
-cd remote_scanner
+
 
 # Decoding SendGrid api key, recorging email for reports, APN
+cd remote_scanner
+cat banner.txt
+
 echo "REMOTE SCANNER SETUP"
 
 choice=$(ask "Do you posses the password for the included SendGrid API key?(y/n)" $yes_no_regex)
