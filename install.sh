@@ -141,6 +141,7 @@ sudo raspi-config nonint do_serial 2
 
 # setup ppp (apn required)
 sudo apt-get -y install ppp screen elinks
+cd ../..
 cd remote_scanner
 
 ppp_config="rnet"
