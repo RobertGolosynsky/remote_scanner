@@ -51,7 +51,7 @@ class EmailSender:
 
 				attachment = Attachment()
 				attachment.content = encoded
-				attachment.type = _decide_content_type(file_path)
+				attachment.type = self._decide_content_type(file_path)
 				attachment.filename = os.path.basename(file_path)
 				attachment.disposition = "attachment"
 				mail.add_attachment(attachment)
