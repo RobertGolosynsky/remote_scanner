@@ -47,7 +47,7 @@ case "$choice" in
 		    else 
 		    	read -p "$quest (try $c):" password
 			fi
-			if md5sum --status -c pass.md5; then
+			if echo $password | md5sum --status -c pass.md5; then
 			    break
 			fi
 			((c++))
