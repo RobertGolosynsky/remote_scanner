@@ -13,7 +13,7 @@
    ░    ░   ▒   ░ ░   ░   ░ ░      ░   
    ░  ░     ░  ░      ░     ░  ░   ░  ░
       
-      SDR POWERED REMOTE SCANNER                                       
+      SDR POWERED REMOTE SCANNER       
              
 
                                        
