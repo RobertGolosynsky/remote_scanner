@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+cat banner.txt
+
 email_regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
 port_regex="^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"
 yes_no_regex="^[YyNn]$"
@@ -28,17 +30,32 @@ enable_service(){
 
 
 
+# Presetup
 
-#0. Decoding SendGrid api key, recorging email for reports, APN
+echo "export PATH=$PATH:~/.local/bin" > ~/.bash_rc
+source /home/pi/.bash_rc
+
+sudo apt-get -y update
+sudo apt-get -y upgrade
+
+# pull repo
+
+sudo apt-get -y install git
+sudo apt-get -y install python3-pip
+sudo rm -rf remote_scanner
+git clone https://github.com/RobertGolosynsky/remote_scanner.git
+
+cd remote_scanner
+
+# Decoding SendGrid api key, recorging email for reports, APN
 echo "REMOTE SCANNER SETUP"
-
 
 choice=$(ask "Do you posses the password for the included SendGrid API key?(y/n)" $yes_no_regex)
 case "$choice" in 
   y|Y ) 
-  		enc_key_name="sendgrid.key.enc"
-		curl https://raw.githubusercontent.com/RobertGolosynsky/remote_scanner/master/pass.md5 > pass.md5
-		curl https://github.com/RobertGolosynsky/remote_scanner/blob/master/sendgrid.key.enc?raw=true > $enc_key_name
+		git clone https://github.com/nodesocket/cryptr.git
+		sudo ln -s "$PWD"/cryptr/cryptr.bash /usr/local/bin/cryptr
+  		enc_key_name="sendgrid.key.aes"
 		c=1
 		quest="Enter password"
 		while : ; do
@@ -52,7 +69,9 @@ case "$choice" in
 			fi
 			((c++))
 		done
-		api_key=$(gpg --batch --yes --passphrase $password -d < $enc_key_name)	
+		$("CRYPTR_PASSWORD=$password cryptr decrypt $enc_key_name")
+		api_key=$(head -n 1 ${nc_key_name%.*})
+		echo "Using decrypted Sendgrid api key: $api_key"
 ;;
   n|N ) 
 		api_key=$(ask "Type in your SendGrid API key (from sendgrid console)" ".*")
@@ -63,21 +82,8 @@ esac
 
 recipient=$(ask "Reports email (reports@example.com)" $email_regex)
 apn=$(ask "APN of the GPRS provider (usually url)" ".*")
-#1. Presetup
 
-sudo apt-get -y update
-sudo apt-get -y upgrade
-
-#2. pull repo
-
-sudo apt-get -y install git
-sudo apt-get -y install python3-pip
-sudo rm -rf remote_scanner
-git clone https://github.com/RobertGolosynsky/remote_scanner.git
-
-cd remote_scanner
-
-#3. setup config.py
+# setup config.py
 
 uart_port="/dev/serial0"
 
@@ -93,14 +99,12 @@ sed -i -e "s|<FLAT_DATA_FILE>|flat_data|g" $python_config_file
 sed -i -e "s|<IMAGE_FILE>|graph|g" $python_config_file
 
 
-#4. install python3 requirements
+# install python3 requirements
 pip3 install pipreqs
-echo "export PATH=$PATH:~/.local/bin" > ~/.bash_rc
-source /home/pi/.bash_rc
 pipreqs --force .
 pip3 install -r requirements.txt 
 
-#5. install trl-sdr requirements
+# install trl-sdr requirements
 
 sudo apt-get -y install cmake
 sudo apt-get -y install build-essential
@@ -126,11 +130,11 @@ echo 'blacklist rtl2832' >> $blacklist
 echo 'blacklist rtl2830' >> $blacklist
 sudo mv $blacklist /etc/modprobe.d
 
-#6. enable serial
+# enable serial
 sudo raspi-config nonint do_serial 2
 
 
-#7. setup ppp (apn required)
+# setup ppp (apn required)
 sudo apt-get -y install ppp screen elinks
 
 ppp_config="rnet"
@@ -146,7 +150,7 @@ sudo usermod -a -G dip pi
 
 
 
-#8. setup service 
+# setup service 
 service_name="remote_scanner"
 service_file="$service_name.service"
 service_description="Remote scanner service"
@@ -160,7 +164,7 @@ sed -i -e "s/<DIR>/$working_dir/g" $service_file
 sudo mv $service_file /etc/systemd/system/$service_file
 
 
-#9. Promt user for enabling the service
+# Promt user for enabling the service
 
 choice=$(ask "Should the service be started on boot?(y/n)" $yes_no_regex)
 case "$choice" in 
