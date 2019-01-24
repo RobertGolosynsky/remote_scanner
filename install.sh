@@ -55,12 +55,9 @@ echo "REMOTE SCANNER SETUP"
 choice=$(ask "Do you posses the password for the included SendGrid API key?(y/n)" $yes_no_regex)
 case "$choice" in 
   y|Y ) 
-		git clone https://github.com/nodesocket/cryptr.git
-		sudo rm /usr/local/bin/cryptr
-		sudo ln -s "$PWD"/cryptr/cryptr.bash /usr/local/bin/cryptr
-  		enc_key_name="sendgrid.key.aes"
+		enc_key_fname="sendgrid.key.enc"
 		c=1
-		quest="Enter password"
+		quest="Enter Sendgrid api key password"
 		while : ; do
 			if [[ "$c" -eq 1 ]]; then
 		    	read -p "$quest:" password
@@ -72,8 +69,11 @@ case "$choice" in
 			fi
 			((c++))
 		done
-		$("CRYPTR_PASSWORD=$password cryptr decrypt $enc_key_name")
-		api_key=$(head -n 1 ${nc_key_name%.*})
+
+		plain_key_fname="sendgrid.key"
+		echo "$password" | gpg --yes --no-tty --batch --passphrase-fd 0 -o $plain_key_fname $enc_key_fname
+
+		api_key=$(head -n 1 $plain_key_fname)
 		echo "Using decrypted Sendgrid api key: $api_key"
 ;;
   n|N ) 
