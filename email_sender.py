@@ -40,7 +40,6 @@ class EmailSender:
 			try:
 				with open(file_path,'rb') as f:
 				    data = f.read()
-				    f.close()
 
 				encoded = base64.b64encode(data).decode()
 
