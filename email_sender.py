@@ -5,11 +5,6 @@ import sys
 
 import base64
 import sendgrid
-from sendgrid.helpers.mail import Email, Content, Mail, Attachment
-import urllib.request as urllib
-
-import base64
-import sendgrid
 import os
 from sendgrid.helpers.mail import Email, Content, Mail, Attachment
 import urllib.request as urllib
